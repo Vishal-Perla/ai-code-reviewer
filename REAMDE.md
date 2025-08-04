@@ -78,4 +78,5 @@ I wanted to create an end-to-end demo of modern serverless + AI integration, so 
 
 ---
 
+Feel free to explore the code, deploy your own, or extend it with auth, analytics, or custom LLM prompts! 
 -Vishal Perla
