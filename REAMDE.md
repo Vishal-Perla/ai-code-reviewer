@@ -2,6 +2,44 @@
 
 > Automatically review code snippets for style, security, and performance using OpenAI’s GPT-3.5-turbo, store results in a database, and explore them via a React dashboard.
 
+I created this AI-powered code reviewer to streamline how developers get feedback on their pull requests or code snippets. By combining serverless architecture, an LLM, and a simple dashboard, I built a hire-worthy demo that’s both practical and easy to extend.
+
+### Practical Uses
+- **Instant PR Feedback:** Auto-review code style, security flaws, and performance issues before human review.  
+- **Team Metrics:** Track common error types and review turnaround times over time.  
+- **Learning Tool:** Junior devs can paste snippets and learn best practices from an AI mentor.
+
+### How I Built It
+
+1. **Backend Lambdas**  
+   - **Review Function** (`POST /review`)  
+     - Written in Python, deployed to AWS Lambda.  
+     - Receives a code snippet, calls OpenAI’s GPT-3.5-turbo via a REST request, and returns structured feedback.  
+   - **List Function** (`GET /reviews`)  
+     - Reads saved reviews from a database and returns them as JSON.  
+   - Both functions include CORS headers so my React app can talk to them directly.
+
+2. **Persistent Storage**  
+   - **Initial Prototype:** Amazon RDS MySQL with a `reviews` table.  
+   - **Free-Tier Migration:** Swapped to DynamoDB on-demand tables to stay within free usage.  
+   - Used a small Python helper (`database.py`) to initialize tables and insert or scan review items.
+
+3. **API Gateway**  
+   - Created an HTTP API in AWS API Gateway.  
+   - Defined two routes—`/review` (POST) and `/reviews` (GET)—each integrated with the corresponding Lambda.
+
+4. **React Frontend**  
+   - Bootstrapped with Vite and React.  
+   - Styled with Tailwind CSS and enhanced with Framer Motion for smooth animations.  
+   - Built a submission form to call `POST /review`, then dynamically refresh the history from `GET /reviews`.  
+   - Responsive layout with syntax-highlighted code cards and timestamps.
+
+5. **CI/CD & Hosting**  
+   - Pushed my monorepo (with `frontend/` and `backend/`) to GitHub.  
+   - Connected AWS Amplify to the `main` branch, marked it as a monorepo rooted at `frontend`.  
+   - Added an environment variable (`VITE_API_BASE_URL`) pointing to my live API.  
+   - Amplify automatically builds (`npm run build`) and hosts the site at HTTPS.
+
 ---
 
 ## 🔗 Live Demo
@@ -34,49 +72,3 @@
 - **Hosting:** AWS Amplify
 
 ---
-
-## 🚧 How I Built It
-
-I wanted to create an end-to-end demo of modern serverless + AI integration, so here’s the story of how it came together:
-
-1. **Set up my workspace**  
-   - Installed VS Code, Git, Node.js, Python 3, and the AWS CLI.  
-   - Created a GitHub repo and cloned it locally.
-
-2. **Scaffolded the backend**  
-   - Used Python for two simple AWS Lambda functions:  
-     - **`POST /review`** calls OpenAI’s GPT-3.5-turbo via `requests`, parses the code snippet, and returns feedback.  
-     - **`GET /reviews`** queries a MySQL table (later DynamoDB) and returns all stored reviews as JSON.  
-   - Wrote a `database.py` helper using PyMySQL to initialize the `reviews` table and insert rows.
-   - Configured environment variables in Lambda for `OPENAI_API_KEY`, `DB_HOST`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`.
-
-3. **Provisioned the database**  
-   - Started with Amazon RDS MySQL (db.t3.micro), created the `code_reviews` database, and opened port 3306.  
-   - Later switched to DynamoDB (on-demand) to stay in the free tier permanently.
-
-4. **Deployed Lambdas**  
-   - Built ZIP packages by installing dependencies into a `package/` folder, zipping in my `.py` files.  
-   - Uploaded them via the AWS Console, set the handler names (`lambda_function.lambda_handler` and `get_reviews.lambda_handler`), and bumped the timeout to 15 s.  
-   - Added CORS headers and configured API Gateway (HTTP API) with `/review` and `/reviews` routes.
-
-5. **Built the React frontend**  
-   - Bootstrapped with Vite (`npm create vite@latest . --template react`).  
-   - Installed `axios`, `Tailwind CSS`, and `Framer Motion` for styling + animations.  
-   - Created a submission form that sends `POST /review`, then refreshes the list via `GET /reviews`.  
-   - Styled with Tailwind utilities: cards, rounded corners, dark mode, responsive layout.
-
-6. **Set up CI/CD & hosting**  
-   - Pushed the monorepo (with `frontend/` and `backend/`) to GitHub.  
-   - Connected AWS Amplify to the `main` branch, marked it as a monorepo with root `frontend`.  
-   - Added a `VITE_API_BASE_URL` environment variable pointing to my API Gateway URL.  
-   - Amplify automatically builds (`npm run build`) and deploys to a public HTTPS URL.
-
-7. **Cost controls & cleanup**  
-   - Enabled OpenAI’s free-credits cap (no surprise $ beyond $5).  
-   - Turned on AWS Free Tier and Billing Alerts in us-east-1 to email me if charges exceed $1.  
-   - Plan to stop/delete the RDS instance when idle, or move entirely to DynamoDB free-tier.
-
----
-
-Feel free to explore the code, deploy your own, or extend it with auth, analytics, or custom LLM prompts! 
--Vishal Perla
