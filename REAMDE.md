@@ -10,12 +10,6 @@
 
 ---
 
-## 🖥️ Screenshots
-
-![Dashboard](./frontend/public/dashboard-screenshot.png)
-
----
-
 ## 🚀 Features
 
 - **Automated LLM Reviews**  
