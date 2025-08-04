@@ -44,65 +44,51 @@
 - AWS CLI configured with an IAM user  
 - OpenAI API key (`OPENAI_API_KEY`)
 
-### Local Setup
 
-#### Backend
+## 🚧 How I Built It
 
-cd backend
-python -m venv .venv
-# macOS/Linux
-source .venv/bin/activate
-# Windows PowerShell
-.\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+I wanted to create an end-to-end demo of modern serverless + AI integration, so here’s the story of how it came together:
 
-# Export your environment variables:
-export OPENAI_API_KEY="your_openai_key"
-export DB_HOST="your_rds_endpoint"
-export DB_USER="adminuser"
-export DB_PASSWORD="your_password"
-export DB_NAME="code_reviews"
+1. **Set up my workspace**  
+   - Installed VS Code, Git, Node.js, Python 3, and the AWS CLI.  
+   - Created a GitHub repo and cloned it locally.
 
-# Test locally
-python - << 'EOF'
-from lambda_function import lambda_handler
-print(lambda_handler({"body":"{\"code\":\"console.log('hello')\"}"}, None))
-EOF
+2. **Scaffolded the backend**  
+   - Used Python for two simple AWS Lambda functions:  
+     - **`POST /review`** calls OpenAI’s GPT-3.5-turbo via `requests`, parses the code snippet, and returns feedback.  
+     - **`GET /reviews`** queries a MySQL table (later DynamoDB) and returns all stored reviews as JSON.  
+   - Wrote a `database.py` helper using PyMySQL to initialize the `reviews` table and insert rows.
+   - Configured environment variables in Lambda for `OPENAI_API_KEY`, `DB_HOST`, `DB_USER`, `DB_PASSWORD`, and `DB_NAME`.
 
-####Frontend
-bash
-Copy
-Edit
-cd frontend
-npm install
-npm run dev
-Open http://localhost:5173 to see the app.
+3. **Provisioned the database**  
+   - Started with Amazon RDS MySQL (db.t3.micro), created the `code_reviews` database, and opened port 3306.  
+   - Later switched to DynamoDB (on-demand) to stay in the free tier permanently.
 
-📈 Deployment
-Push your code to GitHub (main branch).
+4. **Deployed Lambdas**  
+   - Built ZIP packages by installing dependencies into a `package/` folder, zipping in my `.py` files.  
+   - Uploaded them via the AWS Console, set the handler names (`lambda_function.lambda_handler` and `get_reviews.lambda_handler`), and bumped the timeout to 15 s.  
+   - Added CORS headers and configured API Gateway (HTTP API) with `/review` and `/reviews` routes.
 
-In /frontend, create .env.production with:
+5. **Built the React frontend**  
+   - Bootstrapped with Vite (`npm create vite@latest . --template react`).  
+   - Installed `axios`, `Tailwind CSS`, and `Framer Motion` for styling + animations.  
+   - Created a submission form that sends `POST /review`, then refreshes the list via `GET /reviews`.  
+   - Styled with Tailwind utilities: cards, rounded corners, dark mode, responsive layout.
 
-ini
-Copy
-Edit
-VITE_API_BASE_URL=https://<YOUR_API_ID>.execute-api.us-west-1.amazonaws.com
-In AWS Amplify:
+6. **Set up CI/CD & hosting**  
+   - Pushed the monorepo (with `frontend/` and `backend/`) to GitHub.  
+   - Connected AWS Amplify to the `main` branch, marked it as a monorepo with root `frontend`.  
+   - Added a `VITE_API_BASE_URL` environment variable pointing to my API Gateway URL.  
+   - Amplify automatically builds (`npm run build`) and deploys to a public HTTPS URL.
 
-Connect your GitHub repo & main branch.
+7. **Cost controls & cleanup**  
+   - Enabled OpenAI’s free-credits cap (no surprise $ beyond $5).  
+   - Turned on AWS Free Tier and Billing Alerts in us-east-1 to email me if charges exceed $1.  
+   - Plan to stop/delete the RDS instance when idle, or move entirely to DynamoDB free-tier.
 
-Enable Monorepo root = frontend.
+---
 
-Set env var VITE_API_BASE_URL to your invoke URL.
+Now you have a serverless, AI-powered code reviewer that fits in a resume bullet and runs 24/7 for pennies a year. Feel free to explore the code, deploy your own, or extend it with auth, analytics, or custom LLM prompts!  
 
-Save & deploy.
 
-Your live site will update automatically on each push.
-
-📄 License
-MIT © Vishal Perla
-
-makefile
-Copy
-Edit
 ::contentReference[oaicite:0]{index=0}
