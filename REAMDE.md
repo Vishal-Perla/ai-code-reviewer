@@ -48,7 +48,6 @@
 
 #### Backend
 
-```bash
 cd backend
 python -m venv .venv
 # macOS/Linux
@@ -69,7 +68,8 @@ python - << 'EOF'
 from lambda_function import lambda_handler
 print(lambda_handler({"body":"{\"code\":\"console.log('hello')\"}"}, None))
 EOF
-Frontend
+
+####Frontend
 bash
 Copy
 Edit
