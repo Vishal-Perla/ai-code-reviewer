@@ -35,16 +35,6 @@
 
 ---
 
-## 📦 Getting Started
-
-### Prerequisites
-
-- Node.js (v16+) & npm  
-- Python 3.8+ & pip  
-- AWS CLI configured with an IAM user  
-- OpenAI API key (`OPENAI_API_KEY`)
-
-
 ## 🚧 How I Built It
 
 I wanted to create an end-to-end demo of modern serverless + AI integration, so here’s the story of how it came together:
