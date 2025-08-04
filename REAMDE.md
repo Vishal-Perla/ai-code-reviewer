@@ -78,7 +78,4 @@ I wanted to create an end-to-end demo of modern serverless + AI integration, so 
 
 ---
 
-Now you have a serverless, AI-powered code reviewer that fits in a resume bullet and runs 24/7 for pennies a year. Feel free to explore the code, deploy your own, or extend it with auth, analytics, or custom LLM prompts!  
-
-
-::contentReference[oaicite:0]{index=0}
+-Vishal Perla
