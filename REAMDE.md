@@ -42,12 +42,6 @@ I created this AI-powered code reviewer to streamline how developers get feedbac
 
 ---
 
-## 🔗 Live Demo
-
-[https://main.d3why3s3rwilu.amplifyapp.com/](https://main.d3why3s3rwilu.amplifyapp.com/)
-
----
-
 ## 🚀 Features
 
 - **Automated LLM Reviews**  
